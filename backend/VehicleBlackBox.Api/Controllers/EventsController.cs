@@ -37,4 +37,12 @@ public class EventsController : ControllerBase
 
         return Ok(ev);
     }
+
+    [HttpPost("events")]
+    public async Task<ActionResult<Event>> CreateEvent(Event newEvent)
+    {
+        _context.Events.Add(newEvent);
+        await _context.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetEventById), new { id = newEvent.Id }, newEvent);
+    }
 }
