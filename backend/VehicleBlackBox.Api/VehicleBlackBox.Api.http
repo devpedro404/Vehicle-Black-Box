@@ -1,0 +1,6 @@
+@VehicleBlackBox.Api_HostAddress = http://localhost:5237
+
+GET {{VehicleBlackBox.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
