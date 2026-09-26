@@ -134,4 +134,39 @@ git fetch --prune origin
 git pull --ff-only origin main
 git status --short
 git log --oneline -10
+```
 
+Depois ler, nesta ordem:
+
+1. `README.md`
+2. `docs/continuity.md`
+3. `docs/backlog.md`
+4. `docs/architecture.md`
+5. `docs/telemetry.md`
+6. `docs/events.md`
+7. `docs/mqtt.md`
+8. documentos da sprint atual
+
+Antes de alterar código:
+
+- conferir PRs recentes;
+- conferir CI;
+- confirmar a branch;
+- não redesenhar a arquitetura sem decisão explícita;
+- não migrar para PostgreSQL sem decisão explícita;
+- não iniciar hardware real;
+- preservar o contrato atual de telemetria;
+- não modificar a feature de outra pessoa sem alinhamento.
+
+## Próximo passo
+
+Concluir o cleanup pré-Sprint 2.
+
+Depois:
+
+1. revisar ideias e benchmarks externos;
+2. definir arquitetura e escopo da Sprint 2;
+3. dividir carga de forma equilibrada entre Gisa e Pedro;
+4. registrar o plano da Sprint 2;
+5. atualizar a `main`;
+6. cada pessoa criar sua própria branch a partir da `main`.
