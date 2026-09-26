@@ -7,7 +7,33 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  async function loadTelemetry() {
+  useEffect(() => {
+    let cancelled = false;
+
+    getLatestTelemetry(vehicleId)
+      .then((data) => {
+        if (!cancelled) {
+          setTelemetry(data);
+          setError(null);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [vehicleId]);
+
+  async function handleRefresh() {
     try {
       setLoading(true);
       setError(null);
@@ -20,10 +46,6 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    loadTelemetry();
-  }, [vehicleId]);
 
   if (loading) {
     return <p className="status">Carregando telemetria...</p>;
@@ -44,7 +66,7 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
           </p>
         </div>
 
-        <button onClick={loadTelemetry}>Atualizar</button>
+        <button onClick={handleRefresh}>Atualizar</button>
       </div>
 
       <section className="telemetry-grid">
