@@ -6,9 +6,9 @@ namespace VehicleBlackBox.Api.Data;
 public class VehicleBlackBoxContext : DbContext
 {
     public VehicleBlackBoxContext(DbContextOptions<VehicleBlackBoxContext> options)
-        : base(options) {   }
+        : base(options) { }
 
-        public DbSet<Event> Events => Set<Event>();
-
-        // Continues with DbSet Vehicle and DbSet Telemetry
+    public DbSet<Event> Events => Set<Event>();
+    public DbSet<Vehicle> Vehicles => Set<Vehicle>();
+    public DbSet<Telemetry> Telemetries => Set<Telemetry>();
 }

@@ -16,3 +16,9 @@ cmake_install.cmake
 # Node
 **/node_modules/
 **/dist/
+
+# SQLite
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
