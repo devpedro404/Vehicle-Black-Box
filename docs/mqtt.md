@@ -1,51 +1,78 @@
 # Vehicle Black Box — MQTT
 
+## Status
+
+Planejado para Sprint 2.
+
+A arquitetura e a divisão de tarefas da Sprint 2 ainda serão fechadas antes da implementação.
+
 ## Objetivo
 
-MQTT será utilizado para comunicação entre o software
-embarcado em C++ e o backend em C#.
+Usar MQTT como camada de comunicação entre o simulador/embedded em C++ e o backend em C#.
 
-Arquitetura:
+Direção planejada:
 
-C++
- ↓
+```text
+C++ Simulator
+      ↓
 MQTT Broker
- ↓
-C# Backend
+      ↓
+ASP.NET Core
+      ↓
+SQLite
+      ↓
+React
+```
 
-## Broker inicial
+## Broker de desenvolvimento
 
-Durante o desenvolvimento será utilizado um broker MQTT local.
+A intenção atual é começar com um broker MQTT local.
 
-Posteriormente poderá ser utilizado Docker.
+Docker poderá ser considerado depois, sem tornar o broker parte da regra de negócio.
 
-## Topics
+## Topics planejados
 
 ### Telemetria
 
+```text
 vehicle/{vehicleId}/telemetry
+```
 
 Exemplo:
 
+```text
 vehicle/CAR-001/telemetry
+```
 
 ### Eventos
 
+```text
 vehicle/{vehicleId}/events
+```
 
 Exemplo:
 
+```text
 vehicle/CAR-001/events
+```
 
 ### Status do dispositivo
 
+Reservado para evolução futura:
+
+```text
 vehicle/{vehicleId}/status
+```
 
 Exemplo:
 
+```text
 vehicle/CAR-001/status
+```
 
-## Payload de telemetria
+## Payload atual de telemetria
+
+O payload MQTT de telemetria deve preservar o contrato já utilizado pela API:
 
 ```json
 {
@@ -60,3 +87,12 @@ vehicle/CAR-001/status
   "latitude": -3.1190,
   "longitude": -60.0217
 }
+```
+
+## Regras arquiteturais
+
+- MQTT é transporte, não banco;
+- MQTT não deve conter regra de persistência;
+- o backend continua responsável por validação e persistência;
+- o frontend não consome MQTT diretamente neste estágio;
+- a implementação final deve ser documentada em `docs/sprints/sprint-02.md`.
