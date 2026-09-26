@@ -1,19 +1,8 @@
-
-Os campos principais — velocidade, RPM, temperatura, aceleração e GPS — são os que já planejamos para a primeira versão. :contentReference[oaicite:1]{index=1}
-
----
-
-## `docs/events.md`
-
-```markdown
 # Vehicle Black Box — Events
 
-Este documento define os eventos inicialmente detectados
-pela Vehicle Black Box.
+Este documento define os eventos planejados para a Vehicle Black Box.
 
-Os limites são experimentais e poderão ser ajustados.
-
----
+Os limites atuais são experimentais e poderão ser ajustados durante testes. Eles não representam calibração certificada de segurança automotiva.
 
 ## HARD_BRAKING
 
@@ -21,99 +10,101 @@ Frenagem brusca.
 
 Regra inicial:
 
+```text
 longitudinalAcceleration <= -5.0 m/s²
+```
 
 Exemplo:
 
-Velocidade:
-82 km/h → 31 km/h
+```text
+Velocidade: 82 km/h → 31 km/h
+Aceleração: -7.2 m/s²
+```
 
-Aceleração:
--7.2 m/s²
-
----
+Este é o único evento com detecção inicial já implementada no simulador no checkpoint de 2026-09-26.
 
 ## HARD_ACCELERATION
 
 Aceleração brusca.
 
-Regra inicial:
+Regra inicial planejada:
 
+```text
 longitudinalAcceleration >= 4.0 m/s²
-
----
+```
 
 ## SPEEDING
 
 Excesso de velocidade.
 
-Regra inicial:
+Regra planejada:
 
+```text
 speed > speedLimit
-
-Exemplo inicial:
-
-speedLimit = 100 km/h
+```
 
 O limite deverá ser configurável.
-
----
 
 ## HARD_CORNERING
 
 Curva brusca.
 
-Utiliza aceleração lateral.
+Usa aceleração lateral.
 
-Regra inicial:
+Regra planejada:
 
+```text
 abs(lateralAcceleration) >= lateralAccelerationLimit
+```
 
-O limite será definido durante os testes.
-
----
+O limite será definido durante testes.
 
 ## HIGH_ENGINE_TEMPERATURE
 
 Temperatura elevada do motor.
 
-Regra inicial:
+Regra inicial planejada:
 
+```text
 engineTemperature > 100°C
+```
 
 O limite deverá ser configurável.
-
----
 
 ## POSSIBLE_IMPACT
 
 Possível impacto.
 
-Esse evento não deverá depender apenas de uma variável.
+Não deverá depender de uma única variável.
 
 Poderá considerar:
 
-- desaceleração muito elevada
-- pico de aceleração
-- mudança brusca de velocidade
-- aceleração lateral elevada
+- desaceleração muito elevada;
+- pico de aceleração;
+- mudança brusca de velocidade;
+- aceleração lateral elevada.
 
 Inicialmente será apenas uma heurística experimental.
 
 Não representa um sistema certificado de detecção de acidentes.
 
----
+## Event Window
 
-# Event Window
+Visão futura:
 
-Quando um evento ocorrer, o sistema deverá preservar dados:
+```text
+[-5s][-4s][-3s][-2s][-1s][EVENTO][+1s][+2s][+3s][+4s][+5s]
+```
 
-5 segundos antes
-+
-momento do evento
-+
-5 segundos depois
+Quando essa funcionalidade for implementada, o sistema deverá preservar telemetria anterior e posterior ao evento.
 
-Exemplo:
+Dados previstos:
 
-[-5][-4][-3][-2][-1][EVENTO][+1][+2][+3][+4][+5]
+- velocidade;
+- aceleração;
+- RPM;
+- temperatura;
+- GPS;
+- timestamp.
+
+Essa janela ainda não está implementada.
