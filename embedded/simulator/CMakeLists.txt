@@ -17,19 +17,29 @@ target_include_directories(
 )
 
 # --- MQTT (P2.1) ---
-set(MOSQUITTO_ROOT "C:/Program Files/mosquitto")
+if(WIN32)
+    set(MOSQUITTO_ROOT "C:/Program Files/mosquitto")
 
-find_library(MOSQUITTO_LIB
-    NAMES mosquitto
-    PATHS "${MOSQUITTO_ROOT}/devel"
-)
-find_path(MOSQUITTO_INCLUDE_DIR
-    NAMES mosquitto.h
-    PATHS "${MOSQUITTO_ROOT}/devel"
-)
+    find_library(MOSQUITTO_LIB
+        NAMES mosquitto
+        PATHS "${MOSQUITTO_ROOT}/devel"
+    )
+    find_path(MOSQUITTO_INCLUDE_DIR
+        NAMES mosquitto.h
+        PATHS "${MOSQUITTO_ROOT}/devel"
+    )
+else()
+    # Linux/CI: libmosquitto-dev instalada via apt, em paths padrao do sistema
+    find_library(MOSQUITTO_LIB
+        NAMES mosquitto
+    )
+    find_path(MOSQUITTO_INCLUDE_DIR
+        NAMES mosquitto.h
+    )
+endif()
 
 if(NOT MOSQUITTO_LIB OR NOT MOSQUITTO_INCLUDE_DIR)
-    message(FATAL_ERROR "libmosquitto nao encontrada em ${MOSQUITTO_ROOT}/devel. Confirme o caminho da instalacao.")
+    message(FATAL_ERROR "libmosquitto nao encontrada. Confirme a instalacao (Windows: ${MOSQUITTO_ROOT}/devel | Linux: pacote libmosquitto-dev).")
 endif()
 
 target_include_directories(vehicle_black_box_simulator PRIVATE
