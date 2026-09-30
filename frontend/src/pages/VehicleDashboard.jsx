@@ -139,9 +139,9 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
       <div className="dashboard-layout">
         <aside className="sidebar">
           <nav>
-            <a className="nav-active" href="/dashboard">
+            <Link className="nav-active" to="/dashboard">
               <span>⌂</span> Dashboard
-            </a>
+            </Link>
 
             <a href="#gps">
               <span>⌖</span> Mapa em Tempo Real

@@ -834,3 +834,74 @@ a {
     max-height: 205px;
   }
 }
+
+/* Desktop widescreen */
+
+@media (min-width: 1201px) {
+  #root {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border: 0;
+  }
+
+  .vbb-shell {
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  .dashboard-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+
+  .dashboard-content {
+    padding: 24px 32px 28px;
+  }
+
+  .hero-panel {
+    min-height: 470px;
+    grid-template-columns:
+      minmax(300px, 1fr)
+      minmax(330px, 0.9fr)
+      minmax(300px, 1fr);
+    gap: 30px;
+  }
+
+  .gauge-arc {
+    width: clamp(300px, 22vw, 390px);
+  }
+
+  .vehicle-radar {
+    height: 430px;
+  }
+
+  .vehicle-radar img {
+    max-height: 370px;
+    max-width: 78%;
+  }
+
+  .radar-ring-1 {
+    width: 220px;
+    height: 220px;
+  }
+
+  .radar-ring-2 {
+    width: 315px;
+    height: 315px;
+  }
+
+  .radar-ring-3 {
+    width: 410px;
+    height: 410px;
+  }
+
+  .telemetry-bottom {
+    gap: 16px;
+  }
+
+  .data-module {
+    min-height: 185px;
+  }
+}
