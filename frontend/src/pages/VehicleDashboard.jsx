@@ -105,7 +105,7 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
           <div className="top-status-card">
             <span className="online-dot" />
             <div>
-              <small>Veículo Online</small>
+              <small>Telemetria disponível</small>
               <strong>{vehicleId}</strong>
             </div>
           </div>
@@ -121,8 +121,8 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
           <div className="top-status-card">
             <span className="wifi-icon">⌁</span>
             <div>
-              <small>MQTT Conectado</small>
-              <strong>Broker Local</strong>
+              <small>Integração MQTT</small>
+              <strong>Configurada</strong>
             </div>
           </div>
 
@@ -155,13 +155,6 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
               <span>⌁</span> Telemetria
             </a>
 
-            <a href="#relatorios">
-              <span>▧</span> Relatórios
-            </a>
-
-            <a href="#config">
-              <span>⚙</span> Configurações
-            </a>
           </nav>
 
           <div className="sidebar-car">
@@ -193,15 +186,15 @@ export default function VehicleDashboard({ vehicleId = "CAR-001" }) {
             </div>
 
             <div className="identity-status">
-              <strong>● Online</strong>
-              <small>Status do Veículo</small>
+              <strong>● Dados recebidos</strong>
+              <small>Status da telemetria</small>
             </div>
 
             <div className="identity-block">
               <span className="identity-icon">⌁</span>
               <div>
-                <strong>MQTT Conectado</strong>
-                <small>Conexão com o Servidor</small>
+                <strong>MQTT</strong>
+                <small>Canal de telemetria configurado</small>
               </div>
             </div>
           </div>
