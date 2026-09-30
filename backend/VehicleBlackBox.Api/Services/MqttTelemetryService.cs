@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MQTTnet;
@@ -57,48 +56,16 @@ public class MqttTelemetryService : BackgroundService
                 var topic = e.ApplicationMessage.Topic;
                 var payload = e.ApplicationMessage.ConvertPayloadToString();
 
-                var telemetry = JsonSerializer.Deserialize<Telemetry>(
+                if (!TelemetryMqttValidator.TryParse(
+                    topic,
                     payload,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                if (telemetry is null)
-                {
-                    _logger.LogWarning("Payload MQTT vazio ou inválido.");
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(telemetry.VehicleId) ||
-                    string.IsNullOrWhiteSpace(telemetry.DeviceId))
+                    out var telemetry,
+                    out var validationError) ||
+                    telemetry is null)
                 {
                     _logger.LogWarning(
-                        "Telemetry inválida: vehicleId ou deviceId ausente.");
-                    return;
-                }
-
-                var topicParts = topic.Split('/');
-
-                if (topicParts.Length != 3 ||
-                    topicParts[0] != "vehicle" ||
-                    topicParts[2] != "telemetry")
-                {
-                    _logger.LogWarning(
-                        "Topic MQTT inválido: {Topic}",
-                        topic);
-                    return;
-                }
-
-                var vehicleIdFromTopic = topicParts[1];
-
-                if (!string.Equals(
-                    vehicleIdFromTopic,
-                    telemetry.VehicleId,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    _logger.LogWarning(
-                        "VehicleId do tópico difere do payload.");
+                        "{ValidationError}",
+                        validationError);
                     return;
                 }
 
@@ -127,12 +94,6 @@ public class MqttTelemetryService : BackgroundService
                 _logger.LogInformation(
                     "Telemetry persistida via MQTT para {VehicleId}.",
                     telemetry.VehicleId);
-            }
-            catch (JsonException ex)
-            {
-                _logger.LogWarning(
-                    ex,
-                    "JSON MQTT inválido. Mensagem descartada.");
             }
             catch (Exception ex)
             {
