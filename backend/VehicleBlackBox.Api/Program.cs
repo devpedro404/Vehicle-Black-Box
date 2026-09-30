@@ -1,3 +1,4 @@
+using VehicleBlackBox.Api.Models;
 using VehicleBlackBox.Api.Services;
 using VehicleBlackBox.Api.Data;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+builder.Services.Configure<MqttOptions>(builder.Configuration.GetSection("Mqtt"));
 
 builder.Services.AddHostedService<MqttTelemetryService>();
 
