@@ -147,56 +147,54 @@ public class MqttTelemetryService : BackgroundService
             .WithClientId(_options.ClientId)
             .Build();
 
-        _mqttClient.DisconnectedAsync += async e =>
+        _mqttClient.DisconnectedAsync += e =>
         {
-            if (stoppingToken.IsCancellationRequested)
-                return;
+            if (!stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogWarning(
+                    "MQTT desconectado do broker.");
+            }
 
-            _logger.LogWarning(
-                "MQTT desconectado. Tentando reconectar em 5 segundos...");
+            return Task.CompletedTask;
+        };
 
-            await Task.Delay(
-                TimeSpan.FromSeconds(5),
-                stoppingToken);
-
+        while (!stoppingToken.IsCancellationRequested)
+        {
             try
             {
                 if (!_mqttClient.IsConnected)
                 {
+                    _logger.LogInformation(
+                        "Tentando conectar ao broker MQTT...");
+
                     await _mqttClient.ConnectAsync(
                         mqttClientOptions,
                         stoppingToken);
                 }
             }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
             catch (Exception ex)
             {
                 _logger.LogWarning(
                     ex,
-                    "Falha na tentativa de reconexão MQTT.");
+                    "Não foi possível conectar ao broker MQTT. Nova tentativa em 5 segundos.");
             }
-        };
 
-        try
-        {
-            _logger.LogInformation(
-                "Tentando conectar ao broker MQTT...");
-
-            await _mqttClient.ConnectAsync(
-                mqttClientOptions,
-                stoppingToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(
-                ex,
-                "Não foi possível conectar ao broker MQTT.");
-        }
-
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await Task.Delay(
-                TimeSpan.FromSeconds(1),
-                stoppingToken);
+            try
+            {
+                await Task.Delay(
+                    TimeSpan.FromSeconds(5),
+                    stoppingToken);
+            }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
         }
     }
 }
