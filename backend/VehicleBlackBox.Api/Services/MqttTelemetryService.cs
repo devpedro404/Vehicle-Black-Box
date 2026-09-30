@@ -147,6 +147,17 @@ public class MqttTelemetryService : BackgroundService
             .WithClientId(_options.ClientId)
             .Build();
 
+        _mqttClient.DisconnectedAsync += e =>
+        {
+            if (!stoppingToken.IsCancellationRequested)
+            {
+                _logger.LogWarning(
+                    "MQTT desconectado do broker.");
+            }
+
+            return Task.CompletedTask;
+        };
+
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -161,16 +172,29 @@ public class MqttTelemetryService : BackgroundService
                         stoppingToken);
                 }
             }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
             catch (Exception ex)
             {
                 _logger.LogWarning(
                     ex,
-                    "Não foi possível conectar ao broker MQTT.");
+                    "Não foi possível conectar ao broker MQTT. Nova tentativa em 5 segundos.");
             }
 
-            await Task.Delay(
-                TimeSpan.FromSeconds(5),
-                stoppingToken);
+            try
+            {
+                await Task.Delay(
+                    TimeSpan.FromSeconds(5),
+                    stoppingToken);
+            }
+            catch (OperationCanceledException)
+                when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
         }
     }
 }
