@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MQTTnet;
 using VehicleBlackBox.Api.Data;
 using VehicleBlackBox.Api.Models;
@@ -10,14 +11,17 @@ public class MqttTelemetryService : BackgroundService
 {
     private readonly ILogger<MqttTelemetryService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly MqttOptions _options;
     private IMqttClient? _mqttClient;
 
     public MqttTelemetryService(
         ILogger<MqttTelemetryService> logger,
-        IServiceScopeFactory scopeFactory)
+        IServiceScopeFactory scopeFactory,
+        IOptions<MqttOptions> options)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
+        _options = options.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,11 +31,14 @@ public class MqttTelemetryService : BackgroundService
 
         _mqttClient.ConnectedAsync += async e =>
         {
-            _logger.LogInformation("MQTT conectado ao broker.");
+            _logger.LogInformation(
+                "MQTT conectado ao broker {Host}:{Port}.",
+                _options.Host,
+                _options.Port);
 
             var subscribeOptions = factory
                 .CreateSubscribeOptionsBuilder()
-                .WithTopicFilter(f => f.WithTopic("vehicle/+/telemetry"))
+                .WithTopicFilter(f => f.WithTopic(_options.Topic))
                 .Build();
 
             await _mqttClient.SubscribeAsync(
@@ -39,7 +46,8 @@ public class MqttTelemetryService : BackgroundService
                 stoppingToken);
 
             _logger.LogInformation(
-                "MQTT inscrito no tópico vehicle/+/telemetry");
+                "MQTT inscrito no tópico {Topic}.",
+                _options.Topic);
         };
 
         _mqttClient.ApplicationMessageReceivedAsync += async e =>
@@ -134,9 +142,9 @@ public class MqttTelemetryService : BackgroundService
             }
         };
 
-        var options = new MqttClientOptionsBuilder()
-            .WithTcpServer("localhost", 1883)
-            .WithClientId("vehicle-black-box-backend")
+        var mqttClientOptions = new MqttClientOptionsBuilder()
+            .WithTcpServer(_options.Host, _options.Port)
+            .WithClientId(_options.ClientId)
             .Build();
 
         while (!stoppingToken.IsCancellationRequested)
@@ -149,7 +157,7 @@ public class MqttTelemetryService : BackgroundService
                         "Tentando conectar ao broker MQTT...");
 
                     await _mqttClient.ConnectAsync(
-                        options,
+                        mqttClientOptions,
                         stoppingToken);
                 }
             }
