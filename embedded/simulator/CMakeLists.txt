@@ -56,3 +56,16 @@ target_sources(vehicle_black_box_simulator PRIVATE
 target_link_libraries(vehicle_black_box_simulator PRIVATE
     ${MOSQUITTO_LIB}
 )
+
+# --- Testes C++ (P3.6) ---
+enable_testing()
+
+add_executable(event_buffer_tests
+    tests/event_buffer_tests.cpp
+)
+
+target_include_directories(event_buffer_tests PRIVATE
+    include
+)
+
+add_test(NAME event_buffer_tests COMMAND event_buffer_tests)
